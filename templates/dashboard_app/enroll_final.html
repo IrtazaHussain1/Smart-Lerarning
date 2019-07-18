@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block body_block %}
+{% load staticfiles %}
+<script type="text/javascript" src="{% static "dashboard_app/JS/make_dialog.js" %}"></script>
+<script type="text/javascript" src="{% static "dashboard_app/JS/search_script.js" %}"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+  $("#add_final_btn").click(function(){
+    $("#dialog").dialog("open");
+  });
+});
+</script>
+{% if message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+  Swal.fire({
+  type: 'error',
+  title: 'Oops...',
+  text: 'Something went wrong! Error May Be {{message}}'
+});
+</script>
+{% endif %}
+<div class="container-fluid" style="height: 800px; margin-top: 50px">
+<h1 class="text-center">Terminal</h1><br><br>
+<input type="text" id="myInput" class="form-control" style="width: 30%" placeholder="Search">
+<br>
+<button class="btn btn-primary" id="add_final_btn" style="float: right; margin-left: 0.5%: ">Add</button>
+  <div id="sessional_table">
+  <table class="table table-striped">
+    <thead>
+      <th>TimeStamp</th>
+      <th>Subject</th>
+      <th>Total Marks</th>
+      <th>Action</th>
+    </thead>
+    <tbody id="myTable">
+      {% for i in ass %}
+      <tr>
+        <td>{{i.TimeStamp}}</td>
+        <td>{{i.fnl_subject}}</td>
+        <td>{{i.fnl_total_marks}}</td>
+        <td><a href="{% url 'dashboard_app:enroll_final_marks_page' i.pk %}" class="glyphicon glyphicon-plus"></a><span>    </span><a href="{% url 'dashboard_app:final_marks_view' i.pk %}" class="glyphicon glyphicon-eye-open"></a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <div id="dialog">
+    <form class="form-horizontal" method="POST">
+      {% csrf_token %}
+      {{ form.as_p}}
+      <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

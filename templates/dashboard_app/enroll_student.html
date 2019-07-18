@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+
+<script src="{% static "dashboard_app/JS/make_dialog.js" %}"></script>
+<script type="text/javascript" src="{% static "dashboard_app/JS/search_script.js" %}"></script>
+
+<div class="container-fluid" style=" margin-top: 50px; height: 800px">
+  <h1 class="text-center">Add Student</h1><br><br>
+
+  <div id="dialog">
+
+    <form class="form-horizontal" method="post">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_s_first_name">First Name:</label>
+        <div class="col-sm-6">
+
+          {{form.s_first_name}}
+          <!-- it automatically creates id = id_s_first_name -->
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_s_last_name">Last Name:</label>
+        <div class="col-sm-6">
+          {{form.s_last_name}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_s_roll_number">Roll Number:</label>
+        <div class="col-sm-6">
+          {{form.s_roll_number}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_s_gender">Gender:</label>
+        <div class="col-sm-6">
+          {{form.s_gender}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_s_department">Department:</label>
+        <div class="col-sm-6">
+          {{form.s_department}}
+        </div>
+      </div>
+
+      <br>
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+
+<button class="btn btn-primary" style="float: right" id="add_btn">Add Student</button>
+<input type="text" class="form-control" id="myInput" placeholder="Search" style="width: 30%">
+  <div>
+    <table class="table table-striped">
+      <thead>
+        <th>Roll Number</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Gender</th>
+        <th>Departmant</th>
+      </thead>
+      <tbody id="myTable">
+        {% for i in data %}
+        <tr>
+          <td>{{i.s_roll_number}}</td>
+          <td>{{i.s_first_name}}</td>
+          <td>{{i.s_last_name}}</td>
+          <td>{{i.s_gender}}</td>
+          <td>{{i.s_department}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

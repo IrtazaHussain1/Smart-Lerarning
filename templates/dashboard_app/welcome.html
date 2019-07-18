@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Welcome</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+</head>
+<style type="text/css">
+body{
+	background: linear-gradient(to left, #66ffcc 0%, #000099 100%)
+}
+h2{
+	color: white;
+}
+p{
+	color: white
+}	
+</style>
+<body>
+	<div class="container-fluid">
+		<div id="card" style="margin: 20%">
+		<h2>Welcome To Smart Learning App</h2>
+		<p>Click Below To Start Setup By Adding Subject And Class And Students</p>
+		<a href="{% url 'dashboard_app:enroll_subject_page' %}" class="btn btn-primary">Start Setup</a>
+		</div>
+	</div>
+</body>
+</html>

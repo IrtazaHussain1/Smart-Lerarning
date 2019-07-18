@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+<script src="{% static "dashboard_app/JS/make_dialog.js" %}"></script>
+<script type="text/javascript" src="{% static "dashboard_app/JS/search_script.js" %}"></script>
+<script type="text/javascript" src="{% static "dashboard_app/JS/load_and_update_table(enrole_student).js" %}"></script>
+<script type="text/javascript">
+  $( function() {
+      $( "#dialog_file" ).dialog({autoOpen: false, width:800,maxHeight:1000, title:'Add new Group',position:{my: "center",at: "center"}, modal:true, show: { effect: "fadeIn" } });
+  });
+</script>
+<script type="text/javascript">
+  $(document).ready(function(){
+     $( "#up_btn" ).click(function() {
+      $( "#dialog_file" ).dialog( "open" );
+    });
+  });
+</script>
+</script>
+{% if message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+  Swal.fire({
+  type: 'error',
+  title: 'Oops...',
+  text: 'Something went wrong! Error May Be {{message}}'
+});
+</script>
+{% endif %}
+<div class="container-fliuid" style=" margin-top: 60px;min-height: 800px">
+  <h1 class="text-center">Add Student</h1><br><br>
+  <div id="dialog">
+
+    <form class="form-horizontal" method="post">
+      {% csrf_token %}
+      {% for fields in form %}
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_s_last_name">{{fields.label_tag}}:</label>
+        <div class="col-sm-6">
+          {{fields}}
+        </div>
+      </div>
+      {% endfor %}
+      <br/>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+  </div>
+  <select class="form-control" name="subject_sel" style="width: 25% ;float: right" id="sub_select">
+  {% for i in sub_list %}
+  <option value="{{i.sub_id}}">{{i.sub_name}}</option>
+  {% endfor %}
+</select>
+    <select class="form-control" id="class_select" style="width: 20%; float: right;">
+      {% for i in class_list %}
+      <option value="{{i.c_name}}">{{i.c_name}}</option>
+      {% endfor %}
+    </select>
+  <input type="text" class="form-control" id="myInput" placeholder="Search" style="width: 30%">
+  <!-- <button class="btn btn-primary" style="float: right; margin-top: 2px" id="add_btn">Add</button> -->
+  <button class="btn btn-primary" style="float: right; margin-top: 2px; margin-right: 2px" id="up_btn">Upload CSV</button>
+  <div>
+    <table class="table table-striped">
+      <thead>
+        <th>Class Name</th>
+        <th>Subject Name</th>
+        <th>Student</th>
+        <th>Details</th>
+      </thead>
+      <tbody id="myTable">
+        {% for i in data %}
+        <tr>
+          <td>{{i.s_class}}</td>
+          <td>{{i.s_subject}}</td>
+          <td>{{i.s_student}}</td>
+          <td><a href="{% url 'dashboard_app:student_detail_page' i.s_student %}" class="glyphicon glyphicon-new-window"></a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div id="dialog_file">
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label class="control-label">Select Class:</label>
+    <select class="form-control" name="class">
+      {% for i in class_list %}
+      <option value="{{i.c_name}}">{{i.c_name}}</option>
+      {% endfor %}
+    </select>
+    <label class="control-label">Select Subject:</label>
+    <select class="form-control" name="sub">
+      {% for i in sub_list %}
+      <option value="{{i.sub_id}}">{{i.sub_name}}</option>
+      {% endfor %}
+    </select>
+    {{up_form.as_p}}
+    <button type="Submit" class="btn btn-primary">Uplaod</button>
+  </form>
+</div>
+</div>
+{% endblock %}

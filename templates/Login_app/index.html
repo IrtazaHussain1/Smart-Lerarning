@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+{% extends "base_login.html" %}
+{% block newlogin %}
+{% if error_message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+  Swal.fire({
+  type: 'error',
+  title: 'Oops...',
+  text: '{{error_message}}'
+});
+</script>
+{% endif %}
+{% if message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+Swal.fire({
+  position: 'top',
+  type: 'success',
+  title: '{{message}}',
+  showConfirmButton: false,
+  timer: 1500
+})
+</script>
+{% endif %}
+
+          <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+           <p id="profile-name" class="profile-name-card"></p>
+           <form class="form-signin" method="post">
+             {% csrf_token %}
+               <span id="reauth-email" class="reauth-email"></span>
+               <input type="text" id="inputusername" class="form-control" placeholder="Username" name="username" required autofocus>
+               <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="pwd" required>
+               <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
+           </form><!-- /form -->
+           <br>
+           <a href="{% url 'login_app:registeration_page' %}" class="forgot-password">
+               Not A User? Register Here
+           </a>
+{% endblock %}

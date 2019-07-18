@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+{% if message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+  Swal.fire({
+  type: 'error',
+  title: 'Oops...',
+  text: 'Something went wrong! Error May Be {{message}}'
+});
+</script>
+{% endif %}
+<div style="margin-top: 30px">
+
+<div class="row">
+	<table class="table table-bordered">
+		<tbody>
+			<tr>
+				<td>Name</td>
+				<td>{{se.s_student.s_first_name}} {{se.s_student.s_last_name}}</td>
+				<td>Register Number</td>
+				<td>{{se.s_student}}</td>
+			</tr>
+			<tr>
+				<td>Gender</td>
+				<td>{{se.s_student.s_gender}}</td>
+				<td>Departmant</td>
+				<td>{{se.s_student.s_department}}</td>
+			</tr>
+			<tr>
+				<td>Subject</td>
+				<td colspan="3">{{se.s_subject}}</td>
+			</tr>
+			<tr>
+				<td>Prediction Class</td>
+				<td colspan="3">{{pred.prediction_class}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div class="row">
+	<div class="col-sm-5" id="Teams_table" style="border-radius: 15px; box-shadow: 5px 5px 5px grey;height: 500px">
+	<label><h3>Team</h3></label><br>
+	<label>Current Team</label>
+	<table class="table table-hover">
+		<thead>
+			<th>Subject</th>
+			<th>Team ID</th>
+			<th>Update</th>
+		</thead>
+		<tbody>
+			{% for i in team %}
+			<tr>
+				<td>{{i.team_subj}}</td>
+				<td>{{i.team_id}}</td>
+				<td><a href="{% url 'dashboard_app:team_update' i.pk %}" class="glyphicon glyphicon-pencil"></a></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<label>Team Members</label>
+	<table class="table table-hover">
+		<tbody>
+			{% for i in team %}
+			<tr>
+				<td>{{i.position1}}</td>
+				<td><a href="{% url 'dashboard_app:student_detail_page' i.position1 %}" class="glyphicon glyphicon-new-window"></a></td>
+			</tr>
+			<tr>
+				<td>{{i.position2}}</td>
+				<td><a href="{% url 'dashboard_app:student_detail_page' i.position2 %}" class="glyphicon glyphicon-new-window"></a></td>
+			</tr>
+			<tr>
+				<td>{{i.position3}}</td>
+				<td><a href="{% url 'dashboard_app:student_detail_page' i.position3 %}" class="glyphicon glyphicon-new-window"></a></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% if prev_teams.count != 0 %}
+	<label>Previous Teams</label>
+	<table class="table table-hover">
+		<thead>
+			<th>TimeStamp</th>
+			<th>Team ID</th>
+		</thead>
+		<tbody>
+			{% for i in prev_teams %}
+			<tr>
+				<td>{{i.TimeStamp}}</td>
+				<td>{{i.student_team}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+</div>
+<div class="col-sm-7" id="Performance_graph">
+</div>
+</div>
+<div class="row" style="margin-top: 15px">
+	<div>
+		<label><h3><u>Assignemts</u></h3></label>
+	</div>
+	<div class="col-sm-6" id="assignment_table" style="border-radius: 15px; box-shadow: 5px 5px 5px grey; height: 500px">
+			{% if assignments.count == 0 %}
+			<h3>No Assignmet Yet</h3>
+			{% else %}
+	<table class="table table-hover">
+		<thead>
+			<th>TimeStamp</th>
+			<th>Assignment</th>
+			<th>Total</th>
+			<th>Marks</th>
+		</thead>
+		<tbody>
+			{% for i in assignments %}
+			<tr>
+				<td>{{i.TimeStamp}}</td>
+				<td>{{i.assm_assignment}}</td>
+				<td>{{i.assm_assignment.ass_total_marks}}</td>
+				<td>{{i.assm_obtained_marks}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+</div>
+<div class="col-sm-6" id="Assignment_graph">
+</div>
+</div>
+<div class="row" style="margin-top: 15px">
+	<div>
+		<label><h3><u>Quiz</u></h3></label>
+	</div>
+	<div class="col-sm-6" id="quiz_table" style="border-radius: 15px; box-shadow: 5px 5px 5px grey;height: 500px">
+			{% if quizs.count == 0 %}
+			<h3>No Data Yet</h3>
+			{% else %}
+	<table class="table table-hover">
+		<thead>
+			<th>TimeStamp</th>
+			<th>Quiz</th>
+			<th>Total</th>
+			<th>Marks</th>
+		</thead>
+		<tbody>
+			{% for i in quizs %}
+			<tr>
+				<td>{{i.TimeStamp}}</td>
+				<td>{{i.quizm_quiz}}</td>
+				<td>{{i.quizm_quiz.quiz_total_marks}}</td>
+				<td>{{i.quizm_obtained_marks}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+</div>
+<div class="col-sm-6" id="quiz_graph">
+</div>	
+</div>
+<div class="row" style="margin-top: 15px">
+	<div>
+		<label><h3><u>Sessionals</u></h3></label>
+	</div>
+	<div class="col-sm-6" id="sessional_table" style="border-radius: 15px; box-shadow: 5px 5px 5px grey; height: 500px">
+			{% if sessionals.count == 0 %}
+			<h3>No Data Yet</h3>
+			{% else %}
+	<table class="table table-hover">
+		<thead>
+			<th>TimeStamp</th>
+			<th>Sessional</th>
+			<th>Total</th>
+			<th>Obtain</th>
+		</thead>
+		<tbody>
+			{% for i in sessionals %}
+			<tr>
+				<td>{{i.TimeStamp}}</td>
+				<td>{{i.sesm_sessional}}</td>
+				<td>{{i.sesm_sessional.ses_total_marks}}</td>
+				<td>{{i.sesm_obtained_marks}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+</div>
+<div class="col-sm-6" id="sessional_graph">
+</div>	
+</div>
+</div>
+
+<script type="text/javascript">
+	var  stud_in = "{{stud_id}}" ;
+	d3.json("{% url 'dashboard_app:inter_graph' %}", function(error, in_data){
+		console.log(in_data);
+		var a_marks=[], q_marks=[], s_marks=[];
+		var ass_id=[], ass_title=[];
+		var quiz_id=[], quiz_title=[], ses_id=[], ses_title=[]; 
+		for(i in in_data['AssignmentMarks']){
+			for(j in in_data['Student_Enroll']){
+				if(in_data['Student_Enroll'][j]['id'] == in_data['AssignmentMarks'][i]['assm_student_id']){
+					if(in_data['Student_Enroll'][j]['s_student_id'] == stud_in){
+						a_marks.push(in_data['AssignmentMarks'][i]['assm_obtained_marks']);
+						ass_id.push(in_data['AssignmentMarks'][i]['assm_assignment_id'])
+					}
+				}
+			}
+		}
+		for(i in ass_id){
+			for(j in in_data['Assignment']){
+				if(in_data['Assignment'][j]['id'] == ass_id[i]){
+					ass_title.push(in_data['Assignment'][j]['ass_title']);
+				}
+			}
+		}
+		// quiz graph
+		for(i in in_data['QuizMarks']){
+			for(j in in_data['Student_Enroll']){
+				if(in_data['Student_Enroll'][j]['id'] == in_data['QuizMarks'][i]['quizm_student_id']){
+					if(in_data['Student_Enroll'][j]['s_student_id'] == stud_in){
+						q_marks.push(in_data['QuizMarks'][i]['quizm_obtained_marks']);
+						quiz_id.push(in_data['QuizMarks'][i]['quizm_quiz_id'])
+					}
+				}
+			}
+		}
+		for(i in quiz_id){
+			for(j in in_data['Quiz']){
+				if(in_data['Quiz'][j]['id'] == quiz_id[i]){
+					quiz_title.push(in_data['Quiz'][j]['quiz_title']);
+				}
+			}
+		}
+		// sessional graph
+		for(i in in_data['SessionalMarks']){
+			for(j in in_data['Student_Enroll']){
+				if(in_data['Student_Enroll'][j]['id'] == in_data['SessionalMarks'][i]['sesm_student_id']){
+					if(in_data['Student_Enroll'][j]['s_student_id'] == stud_in){
+						s_marks.push(in_data['SessionalMarks'][i]['sesm_obtained_marks']);
+						ses_id.push(in_data['SessionalMarks'][i]['sesm_sessional_id'])
+					}
+				}
+			}
+		}
+		for(i in ses_id){
+			for(j in in_data['Sessional']){
+				if(in_data['Sessional'][j]['id'] == ses_id[i]){
+					ses_title.push(in_data['Sessional'][j]['ses_title']);
+				}
+			}
+		}
+		console.log(ses_title);
+		console.log(s_marks);
+		var trace_assignment=[{
+			x:ass_title,
+			y:a_marks,
+			type:'bar'
+		}]
+		var trace_quiz=[{
+			x:quiz_title,
+			y:q_marks,
+			type:'bar'
+		}]
+		var trace_sessional=[{
+			x:ses_title,
+			y:s_marks,
+			type:'bar'
+		}]
+		var layout_assignment={
+			title:'Assignemts Graph',
+			responsive:true,
+			xaxis: {title:'Assignemts'},
+  			yaxis: {range: [0, 100], title:'Marks'},
+  			height:500,
+		};
+		var layout_quiz={
+			title:'Quiz Graph',
+			responsive:true,
+			xaxis: {title:'Quiz'},
+  			yaxis: {range: [0, 10], title:'Marks'},
+  			height:500,
+		};
+		var layout_sessional={
+			title:'Sessional Graph',
+			responsive:true,
+			xaxis: {title:'Sessional'},
+  			yaxis: {range: [0, 25], title:'Marks'},
+  			height:500,
+		};
+	Plotly.newPlot('Assignment_graph', trace_assignment, layout_assignment, {displayModeBar: false} );
+	Plotly.newPlot('quiz_graph', trace_quiz, layout_quiz, {displayModeBar: false} );
+	Plotly.newPlot('sessional_graph', trace_sessional, layout_sessional, {displayModeBar: false} );
+	})
+</script>
+<script >
+	var total_p=[],total_p_time=[];
+	var  stud_in = "{{stud_id}}";
+	// let assignments="{{assignments|safe}}".replace(/&quot;/g,"\"")
+	// for(i in assignments){
+		// console.log(assignments);
+	// }
+	// console.log(stud_in);
+	d3.json("{% url 'dashboard_app:inter_graph' %}", function(error, in_data){
+		var total_p=[], total_p_time=[];
+		for(i in in_data['tp']){
+			for(j in in_data['Student_Enroll']){
+				if(in_data['Student_Enroll'][j]['id'] == in_data['tp'][i]['Student_perf_id']){
+					if(in_data['Student_Enroll'][j]['s_student_id'] == stud_in){
+						total_p.push(in_data['tp'][i]['total']);
+						total_p_time.push(in_data['tp'][i]['TimeStamp'])
+					}
+				}
+			}
+		}
+		for(i in in_data['th']){
+			for(j in in_data['Student_Enroll']){
+				if(in_data['Student_Enroll'][j]['id'] == in_data['th'][i]['stud_pref_hist_id']){
+					if(in_data['Student_Enroll'][j]['s_student_id'] == stud_in){
+						total_p.push(in_data['th'][i]['total_val']);
+						total_p_time.push(in_data['th'][i]['TimeStamp'])
+					}
+				}
+			}
+		}
+
+		var trace_total={
+			x:total_p_time,
+			y:total_p,
+			type:'scatter'
+		};
+		var data=[trace_total];
+		var layout={
+			title:'Preformance Graph',
+			responsive:true,
+			height:500,
+			xaxis:{
+				title:'TimeStamp'
+			},
+			yaxis:{
+				title:'Marks',
+				range: [0, 100]
+			}
+		};
+	Plotly.newPlot('Performance_graph',data, layout,{displayModeBar: false});
+	})
+</script>
+{% endblock %}

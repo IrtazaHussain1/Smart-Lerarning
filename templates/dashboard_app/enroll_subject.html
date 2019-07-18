@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load staticfiles%}
+{% block body_block %}
+
+<script src="{% static "dashboard_app/JS/make_dialog.js" %}"></script>
+<script src="{% static "dashboard_app/JS/populate_and_color_table.js" %}"></script>
+<script src="{% static "dashboard_app/JS/subject_dialog.js" %}"></script>
+
+<script type="text/javascript" src="{% static "dashboard_app/JS/search_script.js" %}"></script>
+{% if message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+  Swal.fire({
+  type: 'error',
+  title: 'Oops...',
+  text: 'Something went wrong! Error May Be {{message}}'
+});
+</script>
+{% endif %}
+
+<div class="container" style="min-height: 500px">
+  <h1 class="text-center">Add Subject</h1><br><br>
+<div id="dialog">
+    <form class="form-horizontal" method="post">
+      {% csrf_token %}
+
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_sub_teacher">Subject Teacher:</label>
+        <div class="col-sm-6">
+          {{form.sub_teacher}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_sub_id">Subject Code / Id:</label>
+        <div class="col-sm-6">
+          {{form.sub_id}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_sub_name">Subject Name / Title:</label>
+        <div class="col-sm-6">
+          {{form.sub_name}}
+        </div>
+      </div>
+
+      <br>
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+<button class="btn btn-primary" style="float: right" id="add_btn">Add Subject</button>
+<input type="text" class="form-control" id="myInput" placeholder="Search" style="width: 30%">
+  <div>
+    <table class="table table-striped">
+      <thead>
+        <th>Subject ID</th>
+        <th>Subject Name</th>
+        <th>Teacher Name</th>
+        <th>Detail</th>
+      </thead>
+      <tbody id="myTable">
+        {% for i in data %}
+        <tr>
+          <td>{{i.sub_id}}</td>
+          <td>{{i.sub_name}}</td>
+          <td>{{i.sub_teacher}}</td>
+          <td ><button type= "button" class=" view_btn student_info glyphicon glyphicon-eye-open" value="{{i.sub_id}}"></button></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+<div id="dialog_table">
+  <table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Students</th>
+      <th>Class</th>
+      <th>Prediction</th>
+      <th>Actual Performance</th>
+      <th>Detail</th>
+    </tr>
+  </thead>
+  <tbody id="dialog_body">
+  </tbody>
+</table>
+</div>
+{% endblock %}

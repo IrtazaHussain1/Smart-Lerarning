@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+
+<script src="{% static "dashboard_app/JS/populate_and_color_table.js" %}"></script>
+<script src="{% static "dashboard_app/JS/home_dialog.js" %}"></script>
+<script src="{% static "dashboard_app/JS/search_script.js" %}"></script>
+{% if message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+  Swal.fire({
+  type: 'error',
+  title: 'Oops...',
+  text: 'Something went wrong! Error May Be {{message}}'
+});
+</script>
+{% endif %}
+<br><br>
+  <!-- <input class="form-control searchbar" id="myInput"  style="width: 30%;box-shadow: 5px 5px 5px grey; margin-left: -12px" placeholder="Search" name="srch-term" type="text"><br> -->
+  <h1 style="text-shadow: 2px 2px 4px grey"><u>Summary View</u></h1><br>
+<div class="row">
+  <div class="col-sm-5">
+    <div id="poor_performers" style="border-radius: 15px; box-shadow: 5px 5px 5px grey;">
+      <label style="margin-left: 10px; background-color: #ff3d3d; width: 80%; border-radius: 15px; text-align: center; ">Low Performers</label>
+      <table class="table table-hover">
+        <thead>
+          <th>Student</th>
+          <th>Subject</th>
+          <th>Marks</th>
+          <th>Detailts</th>
+        </thead>
+        <tbody>
+          {% for i in bad_s %}
+          <tr>
+            <td>{{i.Student_perf}}</td>
+            <td>{{i.Student_perf.s_subject}}</td>
+            <td>{{i.total}}</td>
+            <td><a href="{% url 'dashboard_app:student_detail_page' i.Student_perf %}" class="glyphicon glyphicon-new-window"></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="table-responsive" style="box-shadow: 5px 5px 5px grey; border-radius: 15px; margin-top: 5px">
+      <label style="margin-left: 10px; background-color: #38f727; width: 80%; border-radius: 15px; text-align: center;">Top Performers</label>
+      <table class="table table-hover">
+        <thead>
+          <th>Student</th>
+          <th>Subject</th>
+          <th>Marks</th>
+          <th>Details</th>
+        </thead>
+        <tbody>
+          {% for v in top_s %}
+          <tr>
+            <td>{{v.Student_perf}}</td>
+            <td>{{v.Student_perf.s_subject}}</td>
+            <td>{{v.total}}</td>
+            <td><a href="{% url 'dashboard_app:student_detail_page' v.Student_perf %}" class="glyphicon glyphicon-new-window"></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div  class="col-sm-7" style=" width: auto;">
+    <div class="table-responsive" style="box-shadow: 5px 5px 5px grey; border-radius: 15px; margin-bottom: 5px">
+    <label style="margin-left: 10px;background-color: lightgrey; width: 80%; border-radius: 15px; text-align: center;">Subjects</label>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Subject</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody id="myTable">
+        {% for val in sub_view %}
+        <tr>
+          <td>{{val.sub_id}}</td>
+          <td>{{val.sub_name}}</td>
+          <td ><button type= "button" class=" view_btn student_info glyphicon glyphicon-eye-open" value="{{val.sub_id}}"></button></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+</table>
+    <label style="float: right; margin-right: 10px"><a href="{% url 'dashboard_app:enroll_subject_page' %}">See More</a></label>
+    </div>
+    <div id="pie_div1" style="box-shadow: 5px 5px 5px grey; border-radius: 15px;">
+    </div>
+  </div>
+</div>
+<h1 style="text-shadow: 2px 2px 4px grey"><u>Recent Summary</u></h1>
+<div class="row" style=" margin-top:10px ;box-shadow: 5px 5px 5px grey;">
+  <div class="col-sm-4" id="Assignment" style="box-shadow: 5px 5px 5px grey; border-radius: 15px">
+    <label style="margin-left: 10px;background-color:  lightgrey; width: 80%; border-radius: 15px; text-align: center;">Recent Assignments</label>
+    {% if ass_sum.count == 0 %}
+    <p>No Record Yet. <a href="">Add Assignment</a></p>
+    {% else %}
+    <table class="table table-hover">
+      <thead>
+        <th>TimeStamp</th>
+        <th>Assignment</th>
+        <th>Subject</th>
+        <th>View</th>
+      </thead>
+      <tbody>
+        {% for i in ass_sum %}
+        <tr>
+          <td>{{i.TimeStamp}}</td>
+          <td>{{i.ass_title}}</td>
+          <td>{{i.ass_subject}}</td>
+          <td><a href="{% url 'dashboard_app:assign_marks_view' i.pk %}" class="glyphicon glyphicon-eye-open"></a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <label style="float: right;"><a href="{% url 'dashboard_app:enroll_assignment_page' %}">See More</a></label>
+    {% endif %}
+  </div>
+  <div class="col-sm-4" id="quiz" style="box-shadow: 5px 5px 5px grey; border-radius: 15px">
+    <label style="margin-left: 10px; background-color:  lightgrey; width: 80%; border-radius: 15px; text-align: center;">Recent Quiz</label>
+    {% if quiz_sum.count == 0 %}
+    <p>No Record Yet. <a href="">Add Quiz</a></p>
+    {% else %}
+    <table class="table table-hover" >
+      <thead>
+        <th>TimeStamp</th>
+        <th>Quiz</th>
+        <th>Subject</th>
+        <th>View</th>
+      </thead>
+      <tbody>
+        {% for i in quiz_sum %}
+        <tr>
+          <td>{{i.TimeStamp}}</td>
+          <td>{{i.quiz_title}}</td>
+          <td>{{i.quiz_subject}}</td>
+          <td><a href="{% url 'dashboard_app:quiz_marks_view' i.pk %}" class="glyphicon glyphicon-eye-open"></a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    <label style="float: right;"><a href="{% url 'dashboard_app:enroll_quiz_page' %}">See More</a></label>
+  </div>
+  <div class="col-sm-4" id="Sessional" style="box-shadow: 5px 5px 5px grey; border-radius: 15px">
+    <label style="margin-left: 10px; background-color:  lightgrey; width: 80%; border-radius: 15px; text-align: center;">Recent Sessional</label>
+    {% if ses_sum.count == 0 %}
+    <p>No Record Yet. <a href="">Add Sessional</a></p>
+    {% else %}
+    <table class="table table-hover">
+      <thead>
+        <th>TimeStamp</th>
+        <th>Sessional</th>
+        <th>Subject</th>
+        <th>View</th>
+      </thead>
+      <tbody>
+        {% for i in ses_sum %}
+        <tr>
+          <td>{{i.TimeStamp}}</td>
+          <td>{{i.ses_title}}</td>
+          <td>{{i.ses_subject}}</td>
+          <td><a href="{% url 'dashboard_app:sessional_marks_view' i.pk %}" class="glyphicon glyphicon-eye-open"></a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    <label style="float: right;"><a href="{% url 'dashboard_app:enroll_sessional_page' %}">See More</a></label>
+  </div>
+  
+</div>
+<br>
+<div id="plot_bar"></div>
+<!-- </div> -->
+
+<!-- performance/list of student dialog table here -->
+<div id="dialog">
+  <div><div style="height: 15px; width:15px; background-color:#ff3d3d; float:left; margin-right: 10px "></div> <p style="float: left; margin-right: 10px">Bad Range= 0-49</p>
+  <div style="height: 15px; width:15px; background-color:#e5f727; float:left; margin-right: 10px "></div> <p style="float: left; margin-right: 10px">Average Range= 50-70</p>
+  <div style="height: 15px; width:15px; background-color:#38f727; float:left; margin-right: 10px "></div> <p>Good Range= 71-100</p>
+  </div>
+  <table class="table table-bordered table-responsive">
+  <thead>
+    <tr>
+      <th>Students</th>
+      <th>Class</th>
+      <th>Prediction</th>
+      <th>Actual Performance</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody id="dialog_body">
+  </tbody>
+</table>
+</div>
+<script type="text/javascript">
+  d3.json("{% url 'dashboard_app:inter_graph' %}", function(error, in_data){
+      console.log(in_data);
+      var c= [], c_s=[];
+      for(i in in_data['pref_class_count']){
+        for(s in in_data['subject']){
+          if(in_data['subject'][s]['sub_id'] == in_data['pref_class_count'][i]['subj_of_count_id']){
+            c[i]=[in_data['pref_class_count'][i]['G_count'],in_data['pref_class_count'][i]['A_count'],in_data['pref_class_count'][i]['B_count']];
+            c_s[i]=[in_data['pref_class_count'][i]['subj_of_count_id']]
+          }
+        }
+      }
+      console.log(c_s)
+      console.log("this is c: ",c[0]);
+      console.log(c.length);
+      if(c.length>=2){
+        var data = [{
+            values: c[1],
+            labels: ['Good', 'Average', 'Bad' ],
+            hoverinfo: 'label+percent+name',
+            title:c_s[1],
+            type: 'pie',
+            domain: {column: 1},
+            marker:{
+              colors:['#38f727', '#e5f727', '#ff3d3d']
+            }
+          },
+          {
+            values: c[0],
+            labels: ['Good', 'Average', 'Bad' ],
+            hoverinfo: 'label+percent+name',
+            title:c_s[0],
+            type: 'pie',
+            domain: {column: 0},
+            marker:{
+              colors:['#38f727', '#e5f727', '#ff3d3d']
+            }
+          }
+
+          ];
+        }
+        else{
+          var data = [{
+            values: c[0],
+            labels: ['Good', 'Average', 'Bad' ],
+            hoverinfo: 'label+percent+name',
+            type: 'pie',
+            domain: {column: 0},
+            marker:{
+              colors:['#38f727', '#e5f727', '#ff3d3d']
+            }
+          }];
+        }
+         var layout = {
+          title: 'Students Predicted Percentage in Subject',
+          autosize:false,
+          height: 400,
+          width: 600,
+          responsive:true,
+          showlegend: true,
+          autoMargin:true,
+          grid: {rows: 1, columns: 2}
+          };
+
+          Plotly.newPlot('pie_div1', data, layout, {staticPlot: true} );
+    });
+</script>
+<!-- <script src="{% static "dashboard_app/JS/gauge.js" %}"></script> -->
+{% endblock %}

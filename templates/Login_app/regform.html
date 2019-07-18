@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% extends "base_login.html" %}
+{% block newlogin %}
+{% if error_message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+  Swal.fire({
+  type: 'error',
+  title: 'Oops...',
+  text: '{{error_message}}'
+});
+</script>
+{% endif %}
+{% if message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+Swal.fire({
+  position: 'top',
+  type: 'success',
+  title: '{{message}}',
+  showConfirmButton: false,
+  timer: 1500
+})
+</script>
+{% endif %}
+<img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+<p id="profile-name" class="profile-name-card"></p>
+<form method="post">
+	<div class="form-group">
+		{% csrf_token %}
+		<!-- {{ user_form.as_p }} -->
+		{% for field in user_form %}
+    	{{ field }}<br>
+        {% for error in field.errors %}
+          <p class="fom-control" style="color: red">{{ error }}</p>
+        {% endfor %}
+    {% endfor %}
+			<label for="gender" class="control-label">Gender</label>
+			{{ profile_form.t_gender }}
+			<label for="Department" class="control-label">Departmant</label>
+			{{ profile_form.t_departmant }}
+	</div>
+	<div class="form-group">
+			<button type="submit" class="btn btn-success">Submit</button>
+	</div>
+	<div class="form-group">
+		<a class="redirect" href="{% url 'login_app:main_login_page' %}">Already a User? Login</a>
+	</div>
+</form>
+{% endblock %}

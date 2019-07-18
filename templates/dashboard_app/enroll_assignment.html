@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block body_block %}
+{% load staticfiles %}
+<script type="text/javascript" src="{% static "dashboard_app/JS/make_dialog.js" %}"></script>
+<script src="{% static "dashboard_app/JS/search_script.js"%}"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+  $("#add_assignment_btn").click(function(){
+    $("#dialog").dialog("open");
+  });
+    $("#sub_select").change(function(){
+    var d= $("#sub_select").val();
+    console.log(d);
+    $.ajax({
+    type:'GET',
+    url:'/dashboard/enroll_assignment/',
+    dataType:'JSON',
+    success:function(data){
+    $('#myTable tr').remove();
+    for(i in data['assignments']){
+      var alp=data['assignments'][i]['ass_subject_id'];
+      var da=new Date(data['assignments'][i]['TimeStamp']);
+      if( alp == d ){
+        $("#myTable").append("<tr><td>" + da +" </td><td>"+ data['assignments'][i]['ass_number'] + "</td><td>" + data['assignments'][i]['ass_title'] + "</td><td>" + data['assignments'][i]['ass_total_marks'] + '</td><td><a href="/dashboard/enroll_assignment_marks/'+ data['assignments'][i]['id'] +'" class="glyphicon glyphicon-plus"></a></td></tr>');
+      }
+   };
+  },
+    error:function(error){
+      console.log(error);
+    }
+  });
+  });
+});
+</script>
+{% if message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+  Swal.fire({
+  type: 'error',
+  title: 'Oops...',
+  text: 'Something went wrong! Error May Be {{message}}'
+});
+</script>
+{% endif %}
+<div class="container-fluid" style="margin-top: 50px; height: 800px">
+<h1 class="text-center">Assignment</h1><br><br>
+<select class="form-control" style="width: 25% ;float: right" id="sub_select">
+  {% for i in sub_list %}
+  <option value="{{i.sub_id}}">{{i.sub_name}}</option>
+  {% endfor %}
+</select>
+<input type="text" id="myInput" class="form-control" style="width: 30%" placeholder="Search">
+<br>
+<button class="btn btn-primary" id="add_assignment_btn" style="float: right; margin-left: 0.5%: ">Add Assignment</button>
+<div id="Assignment_table">
+  <table class="table table-striped">
+    <thead>
+      <th>TimeStamp</th>
+      <th>Assignent Number</th>
+      <th>Title</th>
+      <th>Total Marks</th>
+      <th>Action</th>
+    </thead>
+    <tbody id="myTable">
+      {% for i in ass %}
+      <tr>
+        <td>{{i.TimeStamp}}</td>
+        <td>{{i.ass_number}}</td>
+        <td>{{i.ass_title}}</td>
+        <td>{{i.ass_total_marks}}</td>
+        <td><a href="{% url 'dashboard_app:enroll_assignment_marks_page' i.pk %}" class="glyphicon glyphicon-plus"></a><span>    </span><a href="{% url 'dashboard_app:assign_marks_view' i.pk %}" class="glyphicon glyphicon-eye-open"></a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+    
+<div id="dialog">
+      <form class="form-horizontal" method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ass_teacher">Assignment Teacher:</label>
+        <div class="col-sm-6">
+          {{form.ass_teacher}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ass_subject">Assignment Subject:</label>
+        <div class="col-sm-6">
+          {{form.ass_subject}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ass_subject">Assignment Class:</label>
+        <div class="col-sm-6">
+          {{form.ass_class}}
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ass_number">Assignment Number:</label>
+        <div class="col-sm-6">
+          {{form.ass_number}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ass_title">Assignment Title:</label>
+        <div class="col-sm-6">
+          {{form.ass_title}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ass_total_marks">Assignment Total Marks:</label>
+        <div class="col-sm-6">
+          {{form.ass_total_marks}}
+        </div>
+      </div>
+
+
+      <br>
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

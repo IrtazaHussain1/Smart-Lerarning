@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<style type="text/css">
+.ui-dialog .ui-dialog-content { background: yellow; }
+</style>
+<script>
+	  $( function() {
+    $( "#dialog" ).dialog({autoOpen: true, width:500,maxHeight:500, position:{my: "center top+50",at: "center top+50"}},modal:true,show:{ effect: 'fadeIn'},dialogClass: "ui-dialog ui-dialog-content");
+  });
+</script>
+<div class="container" style="text-align: center; width: 500px;height: 500px; margin-top: 100px">
+	<div id="dialog">
+	<form  method="post">
+		{% csrf_token %}
+		<p>Are you sure you want to delete "{{ object }}"?</p>
+		<input id="sav" type="submit" value="Confirm" />
+	</form>
+	<a href="{% url 'dashboard_app:group_page' %}"><button id="sub">Cancel</button></a>
+</div>
+</div>

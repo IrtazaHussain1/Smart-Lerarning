@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block body_block %}
+<script>
+  $( function() {
+    $( "#benh_display" ).dialog({autoOpen: false, width:500,maxHeight:1000, title:'Display Benchmark Records',position:{my: "center",at: "center"}});
+  });
+  </script>
+
+<script>
+  $( function() {
+    $( "#add_bench" ).dialog({autoOpen: false, width:500,maxHeight:1000, title:'Add new Benchmark',position:{my: "center",at: "center"}});
+  });
+  </script>
+  <script type="text/javascript">
+  $(document).ready(function(){
+    $( "#btn_add_bench" ).click(function() {
+      $( "#add_bench" ).dialog( "open" );
+    });
+  });
+  </script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+<div class="container" style=" margin-top: 100px; margin-bottom: 0px; min-height: 1000px">
+  <input id="myInput" class="form-control" placeholder="Search" name="srch-term" type="text" style="width: 30%;">
+  <h1><b>BenchMark</b></h1>
+  <div id="add_bench">
+    <form method="post">
+      {% csrf_token %}
+    <div class="form-group">
+      <input type="text" name="benchmark_val" placeholder="Min Value" class="form-control">
+      <br>
+      <input type="text" name="name_benchmark" placeholder="Benchmark Name" class="form-control">
+      <br>
+      <input type="date" name="end_date"  class="form-control">
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-default" name="add_benchmark">ADD</button>
+    </div>
+  </form>
+  <br>
+  </div>
+  <div class="" id="table_div">
+    <label for="table_info" class="label-control">Previouly Added Thresholds</label>
+    <button class="btn btn-default" id="btn_add_bench" style="float: right">Add Benchmark</button>
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>TimeStamp</th>
+        <th>Benchmark Name</th>
+        <th>End Date</th>
+        <th>Min Threshold</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody id="myTable">
+      {% for d in data %}
+      <tr>
+        <td>{{d.TimeStamp}}</td>
+        <td>{{d.benchmark_name}}</td>
+        <td>{{d.end_date}}</td>
+        <td>{{d.benchmark_value}}</td>
+        <td><a class="btn_disp glyphicon glyphicon-eye-open"></a><input type="text" value="{{d.pk}}" id="a_val" hidden></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+
+  <div id="benh_display">
+      <table class="table">
+        <thead>
+          <th>Student</th>
+          <th>Total</th>
+        </thead>
+        <tbody id="myBody">
+          {% for j in tp %}
+          {% if j.total <= 60 %}
+            <tr>
+              <td>{{j.Student_perf}}</td>
+              <td>{{j.total}}</td>
+            </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $( ".btn_disp" ).click(function() {
+      var valu=$(a_val).val();
+      console.log(valu);
+      $.ajax({
+        method:"GET",
+        url:'/dashboard/benchmark/',
+        dataType:"JSON",
+        data:{
+          valu:valu
+        },
+        success:function(json){
+          console.log(json);
+        },
+        error:function(error){
+          console.log(error);
+        }
+
+      })
+
+      $( "#benh_display" ).dialog( "open" );
+    });
+  });
+  </script>
+
+{% endblock %}

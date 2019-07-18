@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block body_block %}
+{% load staticfiles %}
+<script type="text/javascript" src="{% static "dashboard_app/JS/make_dialog.js" %}"></script>
+<script type="text/javascript" src="{% static "dashboard_app/JS/search_script.js" %}"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+  $("#add_sessional_btn").click(function(){
+    $("#dialog").dialog("open");
+  });
+      $("#sub_select").change(function(){
+      var d= $("#sub_select").val();
+      $.ajax({
+      type:'GET',
+      url:'/dashboard/enroll_sessional/',
+      dataType:'JSON',
+      success:function(data){
+        console.log(data);
+        $('#myTable tr').remove();
+        for(i in data['sessional']){
+          var alp=data['sessional'][i]['ses_subject_id'];
+          var da=new Date(data['sessional'][i]['TimeStamp']);
+          if( alp == d ){
+            $("#myTable").append("<tr><td>" + da +" </td><td>" + data['sessional'][i]['ses_number'] + "</td><td>" + data['sessional'][i]['ses_title'] + "</td><td>" + data['sessional'][i]['ses_total_marks'] + '</td><td><a href="/dashboard/enroll_assignment_marks/'+ data['sessional'][i]['id'] +'" class="glyphicon glyphicon-plus"></a></td></tr>');
+          }
+       };
+    },
+    error:function(error){
+      console.log(error);
+    }
+  });
+  });
+});
+</script>
+{% if message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+  Swal.fire({
+  type: 'error',
+  title: 'Oops...',
+  text: 'Something went wrong! Error May Be {{message}}'
+});
+</script>
+{% endif %}
+<div class="container-fluid" style="height: 800px; margin-top: 50px">
+  <h1 class="text-center">Sessional</h1><br><br>
+  <select class="form-control" style="width: 25% ;float: right" id="sub_select">
+  {% for i in sub_list %}
+  <option value="{{i.sub_id}}">{{i.sub_name}}</option>
+  {% endfor %}
+</select>
+<input type="text" id="myInput" class="form-control" style="width: 30%" placeholder="Search">
+<br>
+<button class="btn btn-primary" id="add_sessional_btn" style="float: right; margin-left: 0.5%: ">Add Sessional</button>
+  <div id="sessional_table">
+  <table class="table table-striped">
+    <thead>
+      <th>TimeStamp</th>
+      <th>Sessional Number</th>
+      <th>Title</th>
+      <th>Total Marks</th>
+      <th>Action</th>
+    </thead>
+    <tbody id="myTable">
+      {% for i in ass %}
+      <tr>
+        <td>{{i.TimeStamp}}</td>
+        <td>{{i.ses_number}}</td>
+        <td>{{i.ses_title}}</td>
+        <td>{{i.ses_total_marks}}</td>
+        <td><a href="{% url 'dashboard_app:enroll_sessional_marks_page' i.pk %}" class="glyphicon glyphicon-plus"></a><span>    </span><a href="{% url 'dashboard_app:sessional_marks_view' i.pk %}" class="glyphicon glyphicon-eye-open"></a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <div id="dialog">
+    <form class="form-horizontal" method="POST">
+      {% csrf_token %}
+
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ses_teacher">Sessional Teacher:</label>
+        <div class="col-sm-6">
+          {{form.ses_teacher}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ses_subject">Sessional Subject:</label>
+        <div class="col-sm-6">
+          {{form.ses_subject}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ass_subject">Sessional Class:</label>
+        <div class="col-sm-6">
+          {{form.ses_class}}
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ses_number">Sessional Number:</label>
+        <div class="col-sm-6">
+          {{form.ses_number}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ses_title">Sessional Title:</label>
+        <div class="col-sm-6">
+          {{form.ses_title}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="id_ses_total_marks">Sessional Total Marks:</label>
+        <div class="col-sm-6">
+          {{form.ses_total_marks}}
+        </div>
+      </div>
+
+
+      <br>
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

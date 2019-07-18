@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+  <title>Smart Learning{% block title %}{% endblock %}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <link rel="stylesheet" type="text/css" href="{% static "Login_app/vendor/css-hamburgers/hamburgers.min.css"%}"> -->
+  <!-- <link rel="stylesheet" type="text/css" href="{% static "Login_app/vendor/bootstrap/css/bootstrap.min.css"%}"> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static "dashboard_app/css/main.css"%}">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8.13.0/dist/sweetalert2.all.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="http://d3js.org/d3.v3.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $('.nav.navbar-nav > li').on('click', function() {
+    $(this).addClass('active');
+    $(this).siblings().removeClass('active');
+  });    
+</script>
+  {% block scripts %}{% endblock %}
+
+</head>
+<body>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top ">
+    <div class="container-fluid">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <div class="navbar-header">
+        <a class="navbar-brand" href="{% url 'dashboard_app:dashboard_page' %}"><b>Smart Learning</b></a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li id="home_li"><a href="{% url 'dashboard_app:dashboard_page' %}">Home</a></li>
+         <!--  <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="{% url 'dashboard_app:analysis_page' %}">Analysis<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="{% url 'dashboard_app:analysis_page' %}">Assignment Analysis</a></li>
+              <li><a href="{% url 'dashboard_app:analysis_quiz_page' %}">Quiz Analysis</a></li>
+              <li><a href="{% url 'dashboard_app:analysis_sessional_page' %}">Sessional Analysis</a></li>
+            </ul>
+          </li> -->
+          <li id="team_li"><a href="{% url 'dashboard_app:group_page' %}">Teams</a></li>
+          <!-- <li><a href="{% url 'dashboard_app:seating_plan_page' %}">Interventions</a></li> -->
+          <li id="subject_li"><a href="{% url 'dashboard_app:enroll_subject_page' %}">Subject</a></li>
+          <li><a href="{% url 'dashboard_app:enroll_class_page' %}">Class</a></li>
+          <!-- <li><a href="{% url 'dashboard_app:enroll_student_page' %}">Student</a></li> -->
+          <li><a href="{% url 'dashboard_app:enroll_student_class_page' %}">Student</a></li>
+          <li id="add_li" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="{% url 'dashboard_app:enroll_class_page' %}">Assessments<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <!-- <li><a href="{% url 'dashboard_app:enroll_subject_page' %}">Subject</a></li> -->
+              <li><a href="{% url 'dashboard_app:enroll_assignment_page' %}">Assignment</a></li>
+              <li><a href="{% url 'dashboard_app:enroll_quiz_page' %}">Quiz</a></li>
+              <li><a href="{% url 'dashboard_app:enroll_sessional_page' %}">Sessional</a></li>
+              <li><a href="{% url 'dashboard_app:enroll_final_page' %}">Final</a></li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a ><span class="glyphicon glyphicon-user"></span>{{ name }}</a></li>
+          <li><a href="{% url 'login_app:logout_page' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+<div class="container-fluid text-center">
+  <div class="row content">
+    <div class="col-xs-12 text-left">
+      <div class="container">
+        {% block body_block %}
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="container-fluid text-center" style="margin-top: 50px;">
+  <p><b>Contact:</b> +92123-1234567</p>
+  <p><b>Email:</b> smartlearning@gmail.com</p>
+  <p><b>Country:</b> Pakistan</p>
+</footer>
+
+
+</body>
+</html>

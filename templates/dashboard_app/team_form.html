@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+<div style="min-height: 600px">
+	<div class="row" style="margin-top: 10px">
+	<div class="col-sm-5" style="border-radius: 15px; border-style: solid; padding: 100px; margin-top:100px ">
+	<form method="post">
+		{% csrf_token %}
+    <label class="label-control">Update Team {{pk}}</label>
+    {{ form.as_p }}
+    <input type="submit" class="btn btn-success" value="Update">
+    <a href="{% url 'dashboard_app:group_page' %}"><button type="submit" class=" btn btn-danger"> Cancel</button></a>
+</form>	
+	</div>
+	<div class="col-sm-7" style="margin-top: 50px;border-style:solid; border-radius: 15px">
+		<h3>Other Teams</h3>
+		<table class="table table-bordered">
+			<thead>
+				<th>Team</th>
+				<th>Students</th>
+			</thead>
+			<tbody>
+				{% for i in team %}
+				{% if i.team_id != pk %}	
+				<tr>
+					<td rowspan="3" style="background-color: lightgray">{{i.team_id}}</td>
+					<td>{{i.position1}}</td>
+				</tr>
+				<tr>
+					<td>{{i.position2}}</td>
+				</tr>
+				<tr>
+					<td>{{i.position3}}</td>
+				</tr>
+				{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	color_actual();
+});
+
+
+function color_actual(){
+	$("#dialog_body tr").each(function(){
+	var col_val = $(this).find("td:eq(3)").text();
+	if (col_val >= 85 && col_val <= 100 ){
+	$(this).find("td:eq(3)").css("background-color","#00ff0c");  //the selected class colors the row green//
+	}
+	else if(col_val >= 60 && col_val <= 84){
+	$(this).find("td:eq(3)").css("background-color","#faff00");
+	}
+	else if(col_val < 60 ) {
+	$(this).find("td:eq(3)").css("background-color",'#ff0000');
+	}
+	else{
+	alert('NO Predictions Match');
+	}
+	});
+}
+
+</script>
+{% endblock %}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block body_block %}
+
+<!-- search script -->
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+<div class="container-fluid" style="margin-top: 50px; height: 800px">
+   <h1 class="text-center">Intervention</h1><br><br>
+  <div>
+    {% csrf_token %}
+    <input id="myInput" class="form-control" placeholder="Search" name="srch-term" type="text" style="width: 30%; float: left;">
+        <select id="sub_select" class="form-control" onchange="get_sub_val();" name='subject_select_value' style="width: 30%; float: right">
+          {% for value in subj %}
+          <option value="{{value.sub_id}}">{{ value.sub_name }}</option>
+          }
+          {% endfor %}
+        </select>
+  </div>
+  <br>
+  <br>
+  <div>
+    <a href="{% url 'dashboard_app:group_page' %}"><button class="btn btn-default" style="float: right">Add Intervention</button></a>
+    <div class="" id="table_div">
+      <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>TimeStamp</th>
+          <th>intervention ID</th>
+          <th>Intervened Student</th>
+          <th>Team</th>
+          <th>Postion</th>
+          <th>History</th>
+        </tr>
+      </thead>
+      <tbody id="myTable">
+        {% for d in data %}
+        <tr>
+          <td>{{d.TimeStamp}}</td>
+          <td>{{d.intervention_id}}</td>
+          <td>{{d.inter_student}}</td>
+          <td>{{d.inter_team}}</td>
+          <td>{{d.inter_postion}}</td>
+          <td><a href="{% url 'dashboard_app:history_page' %}" class="glyphicon glyphicon-eye-open"></a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    <div>
+      <select class="form-control" id="s_select" style="width: 30%">
+      </select>
+    </div>
+    <div id="Pref_plot"></div>
+    <div id="from_view">
+
+    </div>
+</div>
+</div>
+
+<script type="text/javascript">
+      d3.json("{% url 'dashboard_app:inter_graph' %}", function(error, f_data){
+
+      console.log(f_data);
+      for(i in f_data['Student_Enroll']){
+        $('#s_select').append('<option  value="'+f_data['Student_Enroll'][i]['id'] +'">'+ f_data['Student_Enroll'][i]['s_student_id']+ " " + f_data['Student'][i]['s_first_name']+ " " + f_data['Student'][i]['s_last_name'] + '</option>')
+      };
+
+      console.log($('#s_select').val())
+    });
+</script>
+<script type="text/javascript">
+
+  d3.json("{% url 'dashboard_app:inter_graph' %}", function(error, g_data){
+    var s_array=[], tp_array=[], s_name=[];
+    let av_array=[], time_array=[], st_p_array=[];
+      for(i  in g_data['total_performance']){
+        s_array.push(g_data['total_performance'][i]['Student_perf_id']);
+        tp_array.push(g_data['total_performance'][i]['total']);
+      };
+      console.log(s_array + '\n' + tp_array);
+      for(var i = 0; i<s_array.length; i ++){
+        for(j in g_data['Student_Enroll']){
+          if(s_array[i] === g_data['Student_Enroll'][j]['id']){
+            s_name.push(g_data['Student_Enroll'][j]['s_student_id']);
+          };
+        };
+      };
+      console.log(s_name);
+
+      for(i in g_data['avg_performance']){
+        av_array.push(g_data['avg_performance'][i]['avg_perf']);
+        time_array.push(g_data['avg_performance'][i]['TimeStamp']);
+      };
+
+      console.log(av_array);
+      for(i in g_data['total_performance']){
+          if( $('#s_select').val() == g_data['total_performance'][i]['Student_perf_id']){
+            st_p_array.push(g_data['total_performance'][i]['total']);
+          };
+      };
+      console.log("this is ind pref\n" + st_p_array);
+      
+    var trace0={
+      x:time_array,
+      y:av_array,
+      type:'scatter',
+      name:'Class performance'
+    };
+    var trace1={
+      x:time_array,
+      y:st_p_array,
+      type:'scatter',
+      name:'Individual performance'
+    };
+    var data= [trace0, trace1]
+    Plotly.plot('Pref_plot',data);
+
+  });
+</script>
+<!-- this for update -->
+<script type="text/javascript">
+$('#s_select').on('change', function(){
+    d3.json("{% url 'dashboard_app:inter_graph' %}", function(error, g_data){
+    var s_array=[], tp_array=[], s_name=[];
+    let av_array=[], time_array=[], st_p_array=[];
+      for(i  in g_data['total_performance']){
+        s_array.push(g_data['total_performance'][i]['Student_perf_id']);
+        tp_array.push(g_data['total_performance'][i]['total']);
+      };
+      console.log(s_array + '\n' + tp_array);
+      for(var i = 0; i<s_array.length; i ++){
+        for(j in g_data['Student_Enroll']){
+          if(s_array[i] === g_data['Student_Enroll'][j]['id']){
+            s_name.push(g_data['Student_Enroll'][j]['s_student_id']);
+          };
+        };
+      };
+      console.log(s_name);
+
+      for(i in g_data['avg_performance']){
+        av_array.push(g_data['avg_performance'][i]['avg_perf']);
+        time_array.push(g_data['avg_performance'][i]['TimeStamp']);
+      };
+
+      console.log(av_array);
+      for(i in g_data['total_performance']){
+          if( $('#s_select').val() == g_data['total_performance'][i]['Student_perf_id']){
+            st_p_array.push(g_data['total_performance'][i]['total']);
+          };
+      };
+      console.log("this is ind pref\n" + st_p_array);
+      
+    var trace0={
+      x:time_array,
+      y:av_array,
+      type:'scatter',
+      name:'Class performance'
+    };
+    var trace1={
+      x:time_array,
+      y:st_p_array,
+      type:'scatter',
+      name:'Individual performance'
+    };
+    var data= [trace0, trace1]
+    Plotly.newPlot('Pref_plot',data);
+  });
+});  
+
+</script>
+{% endblock %}

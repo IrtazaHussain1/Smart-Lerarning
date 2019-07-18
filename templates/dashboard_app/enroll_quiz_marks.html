@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+<script src="{% static "dashboard_app/JS/make_dialog.js" %}"></script>
+{% if message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+  Swal.fire({
+  type: 'error',
+  title: 'Oops...',
+  text: 'Something went wrong! {{message}}'
+});
+</script>
+{% endif %}
+<div style="margin-top: 50px">
+  <h1 class="text-center">Quiz Marks</h1><br><br>
+<button type="button" id="add_btn" class="btn btn-primary" style="float: right;">Upload CSV</button>
+<a href="{% url 'dashboard_app:enroll_quiz_page' %}"><button type="button" class="btn btn-danger" style="float: right;">Cancel</button></a>
+</div>
+  <div class="row" style="margin-top: 10px; min-height: 500px">
+    <form method="POST">
+       {% csrf_token %}
+    <table class="table">
+      <thead>
+        <th>Studnet</th>
+        <th>Total</th>
+        <th>Obtain Marks</th>
+      </thead>
+      <tbody>
+        {% for i in st %}
+        <tr>
+          <td><input class="form-control" type="text" readonly value="{{i.s_student}}"></td>
+          <td><input class="form-control" type="text" value="{{t_mark}}" readonly></td>
+          <td><input class="form-control" type="number" name="{{i.s_student}}"  value="0"></td>
+        </tr>
+        {% endfor %}
+      </tbody>     
+    </table>
+    <button type="submit" class="btn btn-success save" style="float: right;">Save</button>
+  </form>
+  <div id="dialog">
+    <label>Select CSV file</label>
+    <form class="form-inline" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{form.as_p}}
+      <input id="upload_btn" type="submit" class="btn btn-primary" name="upload_file_btn" value="Upload">
+      <a class="glyphicon glyphicon-exclamation-sign" id="help"></a>
+      <p id="disc_help"></p>
+    </form>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+  $('#help').click(function(){
+    $('#disc_help').text('File Header Must Be Title')
+  });
+
+  $('#upload_btn').on('click',function(){
+    $.ajax({
+      type:'POST',
+      url:'/dashboard/enroll_assignment_marks/',
+      data:{
+        file_up:$('#assig_csv').val(),
+      },
+      success:function(data){
+        alert('Data Added Successfully')
+      },
+      error:function(error, xhr, status){
+        console.log(error);
+      }
+    })
+  })
+</script>
+{% endblock %}

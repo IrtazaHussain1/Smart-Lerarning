@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+<div class="Container" style=" margin-top: 100px; margin-bottom: 0px; min-height: 1000px">
+  <form class="form-inline" role="search">
+      <div class="form-group">
+        <input class="form-control searchbar" placeholder="Search" name="srch-term" type="text">
+        <div class="form-group">
+          <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+        </div>
+      </div>
+  </form>
+  <h1><b>Assignment Analysis</b></h1>
+<div id="plot_bar"></div>
+<div id="section_B">
+</div>
+  <!-- <button type="button" name="button" id='plot_bar'>Show Bars</button> -->
+<div id='from_view'>
+</div>
+<div id="test_view">
+
+</div>
+</div>
+    <script>
+    function plotdata() {
+      Plotly.d3.csv("{% static "Data/PF_SP18-BCS-A.csv"  %}", function(data){ process_data(data) } );
+
+    };
+
+    function process_data(allRows) {
+
+        console.log(allRows);
+        var xtest = [], ytest = [] ;
+
+        for (var i=0; i<allRows.length; i++) {
+            row = allRows[i];
+            xtest.push( row['Name'] );
+            ytest.push(row['ST (25)']);
+        }
+        console.log( 'X',xtest, 'Y',ytest );
+        make_Plotly( xtest, ytest );
+    }
+
+    function make_Plotly( x, y ){
+        var plotDiv = document.getElementById("plot");
+        var traces = {
+            x: x,
+            y: y,
+            name:'Sessional Line'
+        };
+        var trace1={
+          x:x,
+          y:y,
+          name:'Sessional Bar',
+          type:'bar'
+        };
+        var data= [traces,trace1];
+        Plotly.newPlot('plot_bar', data,{title: 'A section Sessional Data '},{responsive: true});
+    };
+    plotdata();
+</script>
+<script for='text/javascript Bsection'>
+function plotdata_B() {
+  Plotly.d3.csv("{% static "Data/PF_SP18-BCS-B.csv"  %}", function(data){ process_data_B(data) } );
+
+};
+
+function process_data_B(allRows) {
+
+    console.log(allRows);
+    var xtest = [], ytest = [] ;
+
+    for (var i=0; i<allRows.length; i++) {
+        row = allRows[i];
+        xtest.push( row['Name'] );
+        ytest.push(row['ST (25)']);
+    }
+    console.log( 'X',xtest, 'Y',ytest);
+    make_Plotly_B( xtest, ytest);
+}
+
+function make_Plotly_B( x, y){
+    var plotDiv = document.getElementById("plot");
+    var traces = {
+        x: x,
+        y: y,
+        name:'Sessoinal Line'
+    };
+    var trace1={
+      x:x,
+      y:y,
+      name:'Sessoinal Bar',
+      type:'bar'
+    };
+    var data= [traces,trace1];
+
+    Plotly.newPlot('section_B', data,{title: 'B section Sessional Data '},
+        {responsive: true});
+};
+plotdata_B();
+</script>
+<script type="text/javascript">
+function makeplot() {
+    Plotly.d3.csv("{% static "Data/PF_SP18-BCS-C.csv"  %}", function(data){ processData(data) } );
+
+};
+
+function processData(allRows) {
+
+    console.log(allRows);
+    var x = [], y = [];
+    var z=allRows.length;
+    for (var i=0; i<z; i++) {
+        row = allRows[i];
+        x.push( row['Name'] );
+        y.push( row['ST (25)'] );
+    }
+    console.log( 'X',x, 'Y',y);
+    makePlotly( x, y);
+}
+
+function makePlotly( x, y){
+    var plotDiv = document.getElementById("plot");
+    var traces ={
+        x: x,
+        y: y,
+        name:'Sessional Line'
+    };
+    var trace1={
+      x:x,
+      y:y,
+      name:'Sessional Bar',
+      type:'bar'
+    };
+    var data=[traces,trace1]
+
+    Plotly.newPlot('from_view',data,
+        {title: 'C section Sessonal Data'},{responsive: true});
+};
+  makeplot();
+
+
+</script>
+<!-- for test perpose  http://www.sharecsv.com/s/88599dfbbeb8cfca4cd6fc4857ddd80c/PF_SP18-BCS-A.csv-->
+<script type="text/javascript">
+function makeplottest() {
+  Plotly.d3.csv("{% static "Data/PF_SP18-BCS-D.csv"  %}", function(data){ processDatatest(data) } );
+
+};
+
+function processDatatest(allRows) {
+
+    console.log(allRows);
+    var xtest = [], ytest = [];
+
+    for (var i=0; i<allRows.length; i++) {
+        row = allRows[i];
+        xtest.push( row['Name'] );
+        ytest.push( row['ST (25)'] );
+    }
+    console.log( 'X',xtest, 'Y',ytest );
+    makePlotlytest( xtest, ytest );
+}
+
+function makePlotlytest( x, y ){
+    var plotDiv = document.getElementById("plot");
+    var traces = {
+        x: x,
+        y: y,
+        name:'Sessional Line',
+        marker: {
+    color: 'rgb(0,0,0)'
+  }
+    };
+    var trace1={
+      x:x,
+      y:y,
+      name:'Sessional Bar',
+      type:'bar',
+      marker: {
+    color: 'rgb(142,124,195)'
+  }
+    }
+    var data=[traces,trace1];
+
+    Plotly.newPlot('test_view', data,
+        {title: 'D section Sessional Data'}, {responsive: true});
+};
+  makeplottest();
+</script>
+{% endblock %}

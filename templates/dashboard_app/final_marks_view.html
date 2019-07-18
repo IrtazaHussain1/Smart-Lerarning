@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+<div style="margin-top: 50px">
+  <h1 class="text-center">Terminal Marks View</h1><br><br>
+<a href="{% url 'dashboard_app:enroll_final_page' %}"><button id="cancel_btn" type="button" class="btn btn-danger" style="float: right;">Back</button></a>
+</div>
+  <div class="row" style="margin-top: 10px; min-height: 500px">
+    <table class="table">
+      <thead>
+        <th>Studnet</th>
+        <th>Total</th>
+        <th>Obtain Marks</th>
+      </thead>
+      <tbody>
+        {% for i in st %}
+        <tr>
+          <td><input class="form-control" type="text" readonly value="{{i.fnlm_student}}"></td>
+          <td><input class="form-control" type="text" value="{{t_mark}}" readonly></td>
+          <td><input class="form-control" type="number" name="{{i.fnlm_student}}" value="{{i.fnlm_obtained_marks}}" readonly></td>
+        </tr>
+        {% endfor %}
+      </tbody>     
+    </table>
+    <!-- <button type="button" id="form_save" class="btn btn-success save" style="float: right;">Save</button> -->
+</div>
+</div>
+
+{% endblock %}

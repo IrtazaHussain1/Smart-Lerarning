@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body_block %}
+<script src="{% static "dashboard_app/JS/team_dialog.js" %}"></script>
+<script src="{% static "dashboard_app/JS/search_script.js" %}"></script>
+<script src="{% static "dashboard_app/JS/in_dialog_search.js" %}"></script>
+{% if message %}
+<script type="text/javascript">
+  // alert('{{message}}')
+  Swal.fire({
+  type: 'error',
+  title: 'Oops...',
+  text: 'Something went wrong! Error May Be {{message}}'
+});
+</script>
+{% endif %}
+  <div style="margin-top: 30px">
+    <h1 class="text-center">Team/Interventions</h1><br><br>
+    <input id="myInput" class="form-control" placeholder="Search" name="srch-term" type="text" style="width: 30%; float: left;">
+    <form method='POST'>
+        <select id="sub_select" class="form-control" name='subject_select_value' style="width: 30%; float: right">
+          {% for value in sub_data %}
+          <option value="{{value.sub_id}}">{{ value.sub_name }}</option>
+          }
+          {% endfor %}
+        </select>
+      </form>
+  </div>
+  <br>
+  <br>
+  <div style="height: auto;">
+    <div class="row" style="margin-bottom: 15px">
+    <label for="team_diaplay" class="lable-control">Teams</label>
+    <button class="btn btn-success" id="btn_add_group" style="float: right">Add Team</button>
+    <button class="btn btn-danger" id="history" style="float: right;">Team History</button>
+    <button class="btn btn-primary" id="interven_history" style="float: right;">Intervene History</button>
+  </div>
+      <div class="row" style="border-radius: 15px; box-shadow: 5px 5px 5px grey;">
+        <table class="table table-hover" id="team_table">
+        <thead>
+          <tr>
+            <th>Team ID</th>
+            <th>Team Member 1</th>
+            <th>Team Member 2</th>
+            <th>Team Member 3</th>
+            <th>Update</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="myTable">
+          {% for val in data %}
+          <tr>
+            <td>{{val.team_id}}</td>
+            <td>{{val.position1}}</td>
+            <td>{{val.position2}}</td>
+            <td>{{val.position3}}</td>
+            <td><a href="{% url 'dashboard_app:team_update' val.pk %}" class="glyphicon glyphicon-pencil"></a></td>
+            <td><a href="{% url 'dashboard_app:team_delete' val.pk %}" class="glyphicon glyphicon-trash"></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <div class="row" style="margin: 20px;">
+      <select class="form-control" id="t_select" style="width: 20%; margin-right: 5px ;float: left;border-radius: 15px; box-shadow: 5px 5px 5px grey;">
+        {% for i in data %}
+        <option value="{{i.team_id}}">Team {{i.team_id}}</option>
+        {% endfor %}
+      </select>
+      <select class="form-control" id="s_select" style="width: 30%; border-radius: 15px; box-shadow: 5px 5px 5px grey;">
+      </select>
+    </div>
+    <div id="Pref_plot" style="border-radius: 15px; box-shadow: 5px 5px 5px grey;">
+    </div>
+
+  <div id='history_popup'>
+    <div>
+        <select id="team_select" class="form-control" style="float: right;width: 30%">
+        <option value="all">All</option>
+        {% for i in data %}
+        <option value="{{i.team_id}}">Team {{i.team_id}}</option>
+        {% endfor %}
+      </select>
+      <input type="text" name="search_history" id="search_history" class="form-control" placeholder="Search" style="width: 30%">
+    </div>
+    <div>
+      <table class="table table-striped">
+        <thead>
+          <th>TimeStamp</th>
+          <th>Student</th>
+          <th>Team</th>
+        </thead>
+        <tbody id="his_body">
+        </tbody>
+      </table>
+    </div>
+    </div>
+  <div id="add_group">
+    <div style="width: 70%; margin-left:15% ">
+    <form class="form" method="post">
+      {% csrf_token %}
+    <div class="form-group">
+      {{ form.as_p }}
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-default" name="add_team">ADD</button>
+    </div>
+  </form>
+  <br>
+  </div>
+  </div>
+  <div id="inter_div">
+      <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>TimeStamp</th>
+          <th>intervention ID</th>
+          <th>Intervened Student</th>
+          <th>Team</th>
+          <th>Detail</th>
+        </tr>
+      </thead>
+      <tbody id="myTable">
+        {% for d in inter %}
+        <tr>
+          <td>{{d.TimeStamp}}</td>
+          <td>{{d.intervention_id}}</td>
+          <td>{{d.inter_student}}</td>
+          <td>{{d.inter_team}}</td>
+          <td><a href="{% url 'dashboard_app:student_detail_page' d.inter_student %}" class="glyphicon glyphicon-eye-open"></a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+  <!-- <script src="{% static "dashboard_app/JS/update_table_js.js" %}" type="text/javascript"></script> -->
+<!--   <script type="text/javascript">
+    $("#close_dialog").click( function() {
+      $("#dialog_form").dialog( "close" ); 
+  })
+  </script> -->
+  <!-- populate select -->
+<script type="text/javascript">
+      d3.json("{% url 'dashboard_app:inter_graph' %}", function(error, g_data){
+      console.log(g_data);
+      for(i in g_data['Student_Enroll']){
+        for(j in g_data['team']){
+          if(g_data['team'][j]['team_id'] == $('#t_select').val()){
+            if(g_data['team'][j]['position1_id'] == g_data['Student_Enroll'][i]['id'] || g_data['team'][j]['position2_id'] == g_data['Student_Enroll'][i]['id'] || g_data['team'][j]['position3_id'] == g_data['Student_Enroll'][i]['id'] ){
+             $('#s_select').append('<option  value="'+g_data['Student_Enroll'][i]['id'] + '" >'+ g_data['Student_Enroll'][i]['s_student_id']+ " " + g_data['Student'][i]['s_first_name']+ " " + g_data['Student'][i]['s_last_name'] + '</option>')
+          }
+          }
+        }
+      };
+
+      // console.log($('#s_select').data('value'));
+    });
+</script>
+<script type="text/javascript">
+  function graph(){
+
+  d3.json("{% url 'dashboard_app:inter_graph' %}", function(error, g_data){
+    var s_array=[], tp_array=[], s_name=[], t=[], team_av=[],pp_arr=[];
+    let av_array=[], time_array=[], st_p_array=[], team_av_time=[], time_inter=[];
+
+      for(i  in g_data['total_performance']){
+        s_array.push(g_data['total_performance'][i]['Student_perf_id']);
+        tp_array.push(g_data['total_performance'][i]['total']);
+      };
+      
+      for(var i = 0; i<s_array.length; i ++){
+        for(j in g_data['Student_Enroll']){
+          if(s_array[i] === g_data['Student_Enroll'][j]['id']){
+            s_name.push(g_data['Student_Enroll'][j]['s_student_id']);
+          };
+        };
+      };
+      // This is to get avarage performance of class
+      for(i in g_data['avg_performance']){
+        // if(g_data['avg_performance'][i]['Subject_pref_id'] == $('#sub_select').val()){
+        av_array.push(g_data['avg_performance'][i]['avg_perf']);
+        time_array.push(g_data['avg_performance'][i]['TimeStamp']);
+      // }
+      };
+
+      for(i in g_data['total_performance']){
+          if( $('#s_select').val() == g_data['total_performance'][i]['Student_perf_id']){
+            st_p_array.push(g_data['total_performance'][i]['total']);
+            pp_arr.push(g_data['total_performance'][i]['purpose']);
+          };
+      };
+      for(i in g_data['total_perf_hist']){
+       if( $('#s_select').val() == g_data['total_perf_hist'][i]['stud_pref_hist_id']){
+        st_p_array.push(g_data['total_perf_hist'][i]['total_val']);
+        pp_arr.push(g_data['total_perf_hist'][i]['purpose']);
+      }
+    }
+
+      for(i in g_data['team_performance_history']){
+        if(g_data['team_performance_history'][i]['team_p_id_id'] == $('#t_select').val()){
+          team_av.push(g_data['team_performance_history'][i]['total_perf']);
+          team_av_time.push(g_data['team_performance_history'][i]['TimeStamp'])
+        };
+      };
+      
+    var trace0={
+      x:time_array,
+      y:av_array,
+      type:'scatter',
+      name:'Class performance',
+      text:pp_arr
+    };
+    var trace1={
+      x:time_array, 
+      y:st_p_array,
+      type:'scatter',
+      name:'Individual performance',
+      text:pp_arr
+    };
+    var trace2={
+      x:team_av_time,
+      y:team_av,
+      type:'scatter',
+      name:'Team Perfomance',
+      text:pp_arr
+    };
+    var data= [trace0, trace1, trace2]
+    var layout={
+      xaxis:{title:'Time'},
+      yaxis:{title:'Total Performance'}
+    }
+    Plotly.newPlot('Pref_plot',data,layout,{displayModeBar: false});
+
+  });
+  };
+</script>
+<!-- Here script for graph -->
+<script type="text/javascript">
+  graph();
+</script>
+<!-- this for update -->
+<script type="text/javascript">
+$('#s_select').on('change', function(){
+    graph()
+});  
+
+</script>
+<!-- on change team update members and graph team -->
+<script type="text/javascript">
+  $('#t_select').change(function(){
+    d3.json("{% url 'dashboard_app:inter_graph' %}", function(error, g_data){ 
+      $('#s_select option').remove();
+      for(i in g_data['Student_Enroll']){
+        for(j in g_data['team']){
+          if(g_data['team'][j]['team_id'] == $('#t_select').val()){
+            if(g_data['team'][j]['position1_id'] == g_data['Student_Enroll'][i]['id'] || g_data['team'][j]['position2_id'] == g_data['Student_Enroll'][i]['id'] || g_data['team'][j]['position3_id'] == g_data['Student_Enroll'][i]['id'] ){
+             $('#s_select').append('<option  value="'+g_data['Student_Enroll'][i]['id'] + '"  data-value="' + g_data['team'][j]['team_id'] +' " >'+ g_data['Student_Enroll'][i]['s_student_id']+ " " + g_data['Student'][i]['s_first_name']+ " " + g_data['Student'][i]['s_last_name'] + '</option>')
+          }
+          }
+        }
+      };
+});
+    graph();
+});
+</script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#sub_select').change(function(){
+      d3.json("{% url 'dashboard_app:inter_graph' %}", function(error, g_data){
+        $('#myTable tr').remove();
+        for(i in g_data['team']){
+          if(g_data['team'][i]['team_subj_id'] == $('#sub_select').val()){
+            for(j in g_data['Student_Enroll']){
+              if(g_data['Student_Enroll'][j]['id'] == g_data['team'][i]['position1_id']){
+                pos1=g_data['Student_Enroll'][j]['s_student_id']
+              }
+              else if(g_data['Student_Enroll'][j]['id'] == g_data['team'][i]['position2_id']){
+                pos2=g_data['Student_Enroll'][j]['s_student_id']
+              }
+              else if(g_data['Student_Enroll'][j]['id'] == g_data['team'][i]['position3_id']){
+                pos3=g_data['Student_Enroll'][j]['s_student_id']
+              }
+            }
+            $('#myTable').append('<tr><td>'+ g_data['team'][i]['team_id'] +'</td><td>'+ pos1 +'</td><td>'+ pos2 +'</td><td>'+ pos3 +'</td><td><a href="" class="glyphicon glyphicon-pencil"></a></td><td><a href="" class="glyphicon glyphicon-trash"></a></td></tr>')
+          }
+        }
+        $('#t_select option').remove();
+        for(i in g_data['team']){
+          if(g_data['team'][i]['team_subj_id'] == $('#sub_select').val()){
+            $('#t_select').append('<option value="'+ g_data['team'][i]['team_id'] +'">Team '+ g_data['team'][i]['team_id'] +'</option>')
+          }
+        }
+        $('#s_select option').remove();
+        for(i in g_data['Student_Enroll']){
+        for(j in g_data['team']){
+          if(g_data['team'][j]['team_id'] == $('#t_select').val()){
+            if(g_data['team'][j]['position1_id'] == g_data['Student_Enroll'][i]['id'] || g_data['team'][j]['position2_id'] == g_data['Student_Enroll'][i]['id'] || g_data['team'][j]['position3_id'] == g_data['Student_Enroll'][i]['id'] ){
+             $('#s_select').append('<option  value="'+g_data['Student_Enroll'][i]['id'] + '" >'+ g_data['Student_Enroll'][i]['s_student_id']+ " " + g_data['Student'][i]['s_first_name']+ " " + g_data['Student'][i]['s_last_name'] + '</option>')
+          }
+          }
+        }
+      };
+      });
+      graph();
+    });
+  });
+</script>
+{% endblock %}

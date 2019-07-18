@@ -1,0 +1,55 @@
+# assigning veriable
+                    # ass_t=0
+                    # quiz_t=0
+                    # sessional_t=0
+                    # ass_gain=0
+                    # quiz_gain=0
+                    # sessional_gain=0
+                    # t_u=data.assm_assignment
+                    # f=dict()
+                    # # assignment
+                    # ass_res=Assignment.objects.filter(ass_subject= t_u.ass_subject)
+                    # for i in range(0,len(ass_res)):
+                    #     ass_t=ass_t + int(ass_res[i].ass_total_marks)
+                    #     t_asm=AssignmentMarks.objects.filter(assm_assignment=ass_res[i], assm_student=data.assm_student )
+                    #     for j in range(0,len(t_asm)):
+                    #         ass_gain= ass_gain + float(t_asm[j].assm_obtained_marks)
+                    # ass_weight=ass_gain/ass_t
+                    # #  Quiz
+                    # quiz_res=Quiz.objects.filter(quiz_subject= t_u.ass_subject)
+                    # for i in range(0,len(quiz_res)):
+                    #     quiz_t=quiz_t + int(quiz_res[i].quiz_total_marks)
+                    #     t_asm=QuizMarks.objects.filter(quizm_quiz=quiz_res[i], quizm_student=data.assm_student )
+                    #     for j in range(0,len(t_asm)):
+                    #         quiz_gain= quiz_gain + float(t_asm[j].quizm_obtained_marks)
+                    # quiz_weight=quiz_gain/quiz_t
+                    # #  Sessionals
+                    # sess_res=Enroll_Sessional.objects.filter(ses_subject= t_u.ass_subject)
+                    # for i in range(0,len(sess_res)):
+                    #     sessional_t=sessional_t + int(sess_res[i].ses_total_marks)
+                    #     t_asm=SessionalMarks.objects.filter(sesm_sessional=sess_res[i],sesm_student=data.assm_student)
+                    #     for j in range(0,len(t_asm)):
+                    #         sessional_gain= sessional_gain + float(t_asm[j].sesm_obtained_marks)
+                    # sessional_weight=sessional_gain/sessional_t
+                    # #  total preformance
+                    # if ass_t != 0 and quiz_t != 0 and sessional_t != 0:
+                    #     total_p=(ass_weight*10) + (quiz_weight*15) + (sessional_weight*25)
+                    # else:
+                    #     if ass_t == 0 and quiz_t !=0 and sessional_t !=0:
+                    #         gg=(quiz_weight*15) + (sessional_weight*25)
+                    #         total_p=(gg/40)*100
+                    #     elif ass_t !=0 and quiz_t==0  and sessional_t !=0:
+                    #         gg=(ass_weight*10)+ (sessional_weight*25)
+                    #         total_p=(gg/35)*100
+                    #     elif ass_t !=0 and quiz_t !=0 and sessional_t== 0:
+                    #         gg= (ass_weight*10) + (quiz_weight*15)
+                    #         total_p=(gg/25)*100
+                    #     elif ass_t==0 and quiz_t==0 and sessional_t!=0:
+                    #         total_p=(sessional_weight*100)
+                    #     elif ass_t == 0 and quiz_t !=0 and sessional_t==0:
+                    #         total_p=quiz_weight*100
+                    #     elif ass_t !=0 and quiz_t==0 and sessional_t ==0:
+                    #         total_p=ass_weight*100
+                    # # total_p=ass_weight + quiz_weight + sessional_weight
+                    # st=data.assm_student
+                    # total_performance.objects.create(Student_perf=st, total=total_p)
